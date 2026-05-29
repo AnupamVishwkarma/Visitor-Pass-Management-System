@@ -20,6 +20,9 @@ app.use("/api/visitors", require("./routes/visitorRoutes"));
 app.use("/api/appointments", require("./routes/appointmentRoutes"));
 app.use("/api/passes", require("./routes/passRoutes"));
 app.use("/api/checklogs", require("./routes/checkLogRoutes"));
+app.use("/api/dashboard", require("./routes/dashboardRoutes"));
+app.use("/pdfs", express.static("pdfs"));
+app.use("/api/reports", require("./routes/reportRoutes"));
 
 app.get("/", (req, res) => {
     res.send("Visitor Pass API Running");

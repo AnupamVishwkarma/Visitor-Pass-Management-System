@@ -1,6 +1,8 @@
 const Pass = require("../models/Pass");
 const Appointment = require("../models/Appointment");
 const generateQR = require("../utils/generateQR");
+const Visitor = require("../models/Visitor");
+const generatePDF = require("../utils/generatePDF");
 
 const createPass = async (req, res) => {
     try {
@@ -48,6 +50,13 @@ const createPass = async (req, res) => {
             qrCode,
             validTill: appointment.visitDate,
         });
+        
+        const visitor = await Visitor.findById(appointment.visitorId);
+
+        const pdfUrl = generatePDF(pass, visitor);
+
+        pass.pdfUrl = pdfUrl;
+        await pass.save();
 
         res.status(201).json(pass);
 

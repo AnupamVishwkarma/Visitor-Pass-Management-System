@@ -23,6 +23,10 @@ const passSchema = new mongoose.Schema({
         type : String,
     },
 
+    pdfUrl : {
+        type : String,
+    },
+
     validTill : {
         type : Date,
         required : true,
