@@ -12,9 +12,14 @@ const app = express();
 
 app.use(cors());
 app.use(express.json());
-
+app.use("/uploads", express.static("uploads"));
 app.use("/api/auth", require("./routes/authRoutes"));
 app.use("/api/test", require("./routes/testRoutes"));
+app.use("/api/visitors", require("./routes/visitorRoutes"));
+
+app.use("/api/appointments", require("./routes/appointmentRoutes"));
+app.use("/api/passes", require("./routes/passRoutes"));
+app.use("/api/checklogs", require("./routes/checkLogRoutes"));
 
 app.get("/", (req, res) => {
     res.send("Visitor Pass API Running");
