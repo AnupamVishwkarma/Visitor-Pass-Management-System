@@ -3,6 +3,7 @@ const express = require("express");
 const {
     checkInVisitor,
     checkOutVisitor,
+    scanPass,
     getLogs,
 } = require("../controllers/checkLogController");
 
@@ -16,6 +17,8 @@ checkInVisitor
 );
 
 router.post("/checkout", protect, authorizeRoles("security", "admin"), checkOutVisitor);
+
+router.post("/scan", protect, authorizeRoles("security", "admin"), scanPass);
 
 router.get("/", protect, authorizeRoles("admin", "security"), getLogs);
 

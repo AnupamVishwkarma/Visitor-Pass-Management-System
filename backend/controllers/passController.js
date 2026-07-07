@@ -3,6 +3,7 @@ const Appointment = require("../models/Appointment");
 const generateQR = require("../utils/generateQR");
 const Visitor = require("../models/Visitor");
 const generatePDF = require("../utils/generatePDF");
+const sendEmail = require("../utils/sendEmail");
 
 const createPass = async (req, res) => {
     try {
@@ -43,12 +44,15 @@ const createPass = async (req, res) => {
 
         const qrCode = await generateQR(qrData);
 
+        const validTill = new Date(appointment.visitDate);
+        validTill.setUTCHours(23, 59, 59, 999);
+
         const pass = await Pass.create({
             visitorId: appointment.visitorId,
             appointmentId: appointment._id,
             passNumber,
             qrCode,
-            validTill: appointment.visitDate,
+            validTill,
         });
         
         const visitor = await Visitor.findById(appointment.visitorId);
@@ -57,6 +61,12 @@ const createPass = async (req, res) => {
 
         pass.pdfUrl = pdfUrl;
         await pass.save();
+
+        await sendEmail({
+            to : visitor?.email,
+            subject : "Visitor Pass Generated",
+            text : `Your visitor pass ${pass.passNumber} has been generated. PDF: ${pass.pdfUrl}`,
+        });
 
         res.status(201).json(pass);
 
@@ -74,9 +84,19 @@ const createPass = async (req, res) => {
 
 const getPasses = async (req, res) => {
     try {
-        const passes = await Pass.find()
-            .populate("visitorId")
-            .populate("appointmentId");
+        const filter = {};
+
+        if(req.user.role === "visitor"){
+            const visitor = await Visitor.findOne({
+                email : req.user.email,
+            });
+
+            filter.visitorId = visitor?._id || null;
+        }
+
+        const passes = await Pass.find(filter)
+        .populate("visitorId")
+        .populate("appointmentId");
 
         res.status(200).json(passes);
     } catch (error) {

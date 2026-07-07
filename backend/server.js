@@ -14,6 +14,7 @@ app.use(cors());
 app.use(express.json());
 app.use("/uploads", express.static("uploads"));
 app.use("/api/auth", require("./routes/authRoutes"));
+app.use("/api/users", require("./routes/userRoutes"));
 app.use("/api/test", require("./routes/testRoutes"));
 app.use("/api/visitors", require("./routes/visitorRoutes"));
 

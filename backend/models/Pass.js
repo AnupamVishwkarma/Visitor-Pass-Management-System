@@ -3,7 +3,7 @@ const mongoose = require("mongoose");
 const passSchema = new mongoose.Schema({
     visitorId : {
         type : mongoose.Schema.Types.ObjectId,
-        ref : "visitor",
+        ref : "Visitor",
         required : true,
     },
 
